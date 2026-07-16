@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { projects } from "@/data/projects";
-import ReferenceLogos from "@/components/sections/referenceLogos";
+import ReferenceLogos from "@/components/sections/ReferenceLogos";
 
 export default function Projects() {
   const [selectedIndex, setSelectedIndex] = useState(0);
