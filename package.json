@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cve:collect": "node --experimental-strip-types scripts/cve/run.ts",
+    "cve:dry-run": "node --experimental-strip-types scripts/cve/run.ts --dry-run",
+    "test:cve": "node --experimental-strip-types --test scripts/cve/tests/*.test.ts"
   },
   "dependencies": {
     "next": "16.2.7",

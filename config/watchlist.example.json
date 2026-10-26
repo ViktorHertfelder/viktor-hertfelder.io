@@ -1,0 +1,178 @@
+{
+  "entries": [
+    { "id": "spring-framework", "category": "Java / Kotlin / Spring", "matcher": { "type": "package", "ecosystem": "Maven", "name": "org.springframework:spring-core" }, "minimumSeverity": "moderate" },
+    { "id": "spring-boot", "category": "Java / Kotlin / Spring", "matcher": { "type": "package", "ecosystem": "Maven", "name": "org.springframework.boot:spring-boot" }, "minimumSeverity": "moderate" },
+    { "id": "node", "category": "JavaScript / TypeScript / Node.js", "matcher": { "type": "product", "vendor": "Node.js", "product": "Node.js" }, "minimumSeverity": "high", "coverageNote": "Runtime product matching is limited to CISA KEV. GitHub package advisories do not provide complete Node.js runtime coverage." },
+    { "id": "npm-cli", "category": "JavaScript / TypeScript / Node.js", "matcher": { "type": "package", "ecosystem": "npm", "name": "npm" }, "minimumSeverity": "moderate", "coverageNote": "Monitors the npm CLI package, not every package in the npm registry." },
+    { "id": "typescript", "category": "JavaScript / TypeScript / Node.js", "matcher": { "type": "package", "ecosystem": "npm", "name": "typescript" }, "minimumSeverity": "moderate" },
+    { "id": "javascript-general", "category": "JavaScript / TypeScript / Node.js", "matcher": { "type": "unsupported", "description": "JavaScript is a language, not one package/product. Node.js, browser engines and individual npm packages are monitored separately; arbitrary JavaScript dependencies are not covered." } },
+    { "id": "react", "category": "React / Next.js / Vue", "matcher": { "type": "package", "ecosystem": "npm", "name": "react" }, "minimumSeverity": "moderate" },
+    { "id": "next", "category": "React / Next.js / Vue", "matcher": { "type": "package", "ecosystem": "npm", "name": "next" }, "minimumSeverity": "moderate" },
+    { "id": "vue", "category": "React / Next.js / Vue", "matcher": { "type": "package", "ecosystem": "npm", "name": "vue" }, "minimumSeverity": "moderate" },
+    { "id": "wordpress", "category": "PHP / WordPress / WooCommerce", "matcher": { "type": "product", "vendor": "WordPress", "product": "WordPress" }, "minimumSeverity": "moderate" },
+    { "id": "woocommerce", "category": "PHP / WordPress / WooCommerce", "matcher": { "type": "package", "ecosystem": "Packagist", "name": "woocommerce/woocommerce" }, "minimumSeverity": "moderate" },
+    {
+      "id": "php-runtime",
+      "category": "PHP / WordPress / WooCommerce",
+      "matcher": {
+        "type": "product", "vendor": "PHP", "product": "PHP",
+        "aliases": [
+          { "vendor": "PHP Group", "product": "PHP" },
+          { "vendor": "PHP", "product": "FastCGI Process Manager (FPM)" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "PHP runtime and PHP-FPM coverage is limited to CISA KEV, not all vendor security releases."
+    },
+    { "id": "php-composer", "category": "PHP / WordPress / WooCommerce", "matcher": { "type": "package", "ecosystem": "Packagist", "name": "composer/composer" }, "minimumSeverity": "moderate" },
+    {
+      "id": "windows-11",
+      "category": "Windows / Microsoft Office / Exchange",
+      "matcher": {
+        "type": "product", "vendor": "Microsoft", "product": "Windows",
+        "aliases": [
+          { "vendor": "Microsoft", "product": "Windows 11" },
+          { "vendor": "Microsoft", "product": "Win32k" },
+          { "vendor": "Microsoft", "product": "MSHTML" },
+          { "vendor": "Microsoft", "product": "Windows Ancillary Function Driver for WinSock" },
+          { "vendor": "Microsoft", "product": "Ancillary Function Driver (afd.sys)" },
+          { "vendor": "Microsoft", "product": "Client-Server Run-time Subsystem (CSRSS)" },
+          { "vendor": "Microsoft", "product": "Windows CNG Key Isolation Service" },
+          { "vendor": "Microsoft", "product": "Windows COM+ Event System Service" },
+          { "vendor": "Microsoft", "product": "DWM Core Library" },
+          { "vendor": "Microsoft", "product": "Graphics Component" },
+          { "vendor": "Microsoft", "product": "Graphics Device Interface (GDI)" },
+          { "vendor": "Microsoft", "product": "DirectX" },
+          { "vendor": "Microsoft", "product": "DirectX Graphics Kernel (DXGKRNL)" },
+          { "vendor": "Microsoft", "product": "WinVerifyTrust function" },
+          { "vendor": "Microsoft", "product": "SmartScreen Prompt" },
+          { "vendor": "Microsoft", "product": "Task Scheduler" },
+          { "vendor": "Microsoft", "product": "Defender" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "MSRC covers the latest three monthly reports using known-affected Windows product IDs. Broad Windows/component KEV matches may concern other releases or servers. Verify Windows 11 applicability in the vendor advisory."
+    },
+    {
+      "id": "microsoft-office",
+      "category": "Windows / Microsoft Office / Exchange",
+      "matcher": {
+        "type": "product", "vendor": "Microsoft", "product": "Office",
+        "aliases": [
+          { "vendor": "Microsoft", "product": "Microsoft Office" },
+          { "vendor": "Microsoft", "product": "Microsoft 365 Apps" },
+          { "vendor": "Microsoft", "product": "Office and WordPad" },
+          { "vendor": "Microsoft", "product": "Visual Basic for Applications (VBA)" },
+          { "vendor": "Microsoft", "product": "MSCOMCTL.OCX" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "Office is covered by CISA KEV and the latest three monthly Microsoft MSRC reports. This is not comprehensive Microsoft 365 cloud monitoring."
+    },
+    { "id": "office-word", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Word" }, "minimumSeverity": "high" },
+    { "id": "office-excel", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Excel" }, "minimumSeverity": "high" },
+    { "id": "office-powerpoint", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "PowerPoint" }, "minimumSeverity": "high" },
+    { "id": "office-outlook", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Outlook", "aliases": [{ "vendor": "Microsoft", "product": "Office Outlook" }] }, "minimumSeverity": "high" },
+    { "id": "office-access", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Access" }, "minimumSeverity": "high" },
+    { "id": "office-onenote", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "OneNote" }, "minimumSeverity": "high" },
+    { "id": "office-publisher", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Publisher" }, "minimumSeverity": "high" },
+    { "id": "office-project", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Project" }, "minimumSeverity": "high" },
+    { "id": "office-visio", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Visio" }, "minimumSeverity": "high" },
+    { "id": "microsoft-teams", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Teams" }, "minimumSeverity": "high" },
+    { "id": "microsoft-exchange", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Exchange Server", "aliases": [{ "vendor": "Microsoft", "product": "Exchange" }] }, "minimumSeverity": "high", "coverageNote": "Exchange Server via CISA KEV and the latest three monthly MSRC reports; not a security audit of Exchange Online." },
+    { "id": "microsoft-sharepoint", "category": "Windows / Microsoft Office / Exchange", "matcher": { "type": "product", "vendor": "Microsoft", "product": "SharePoint", "aliases": [{ "vendor": "Microsoft", "product": "SharePoint Server" }, { "vendor": "Microsoft", "product": ".NET Framework, SharePoint, Visual Studio" }] }, "minimumSeverity": "high" },
+    {
+      "id": "gitlab",
+      "category": "GitLab / GitHub",
+      "matcher": {
+        "type": "product", "vendor": "GitLab", "product": "GitLab",
+        "aliases": [
+          { "vendor": "GitLab", "product": "Community Edition and Enterprise Edition" },
+          { "vendor": "GitLab", "product": "Community and Enterprise Editions" },
+          { "vendor": "GitLab", "product": "GitLab CE/EE" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "GitLab CE/EE product coverage is limited to CISA KEV, not every GitLab security release or gitlab.com incident."
+    },
+    { "id": "github-enterprise", "category": "GitLab / GitHub", "matcher": { "type": "product", "vendor": "GitHub", "product": "GitHub Enterprise Server" }, "minimumSeverity": "high", "coverageNote": "Product identifier configured for CISA KEV; no matching product was present in the catalog checked during setup. GitHub.com service incidents are not covered." },
+    { "id": "github-actions-core", "category": "GitLab / GitHub", "matcher": { "type": "package", "ecosystem": "npm", "name": "@actions/core" }, "minimumSeverity": "moderate" },
+    { "id": "github-actions-exec", "category": "GitLab / GitHub", "matcher": { "type": "package", "ecosystem": "npm", "name": "@actions/exec" }, "minimumSeverity": "moderate" },
+    { "id": "github-actions-artifact", "category": "GitLab / GitHub", "matcher": { "type": "package", "ecosystem": "npm", "name": "@actions/artifact" }, "minimumSeverity": "moderate" },
+    { "id": "github-service", "category": "GitLab / GitHub", "matcher": { "type": "unsupported", "description": "GitHub.com service incidents and arbitrary GitHub Actions require dedicated vendor/security sources or explicit action identifiers; consuming the advisory API does not monitor GitHub itself." } },
+    {
+      "id": "android",
+      "category": "Android / iOS / macOS",
+      "matcher": {
+        "type": "product", "vendor": "Android", "product": "Android OS",
+        "aliases": [
+          { "vendor": "Android", "product": "Android Kernel" },
+          { "vendor": "Android", "product": "Kernel" },
+          { "vendor": "Android", "product": "Framework" },
+          { "vendor": "Android", "product": "Runtime" },
+          { "vendor": "Android", "product": "Pixel" },
+          { "vendor": "Google", "product": "Pixel" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "Android/Pixel KEV coverage only; OEM firmware and chipset-specific issues are not comprehensively covered."
+    },
+    {
+      "id": "apple-ios",
+      "category": "Android / iOS / macOS",
+      "matcher": {
+        "type": "product", "vendor": "Apple", "product": "iOS",
+        "aliases": [
+          { "vendor": "Apple", "product": "iPadOS" },
+          { "vendor": "Apple", "product": "iOS and iPadOS" },
+          { "vendor": "Apple", "product": "iOS and macOS" },
+          { "vendor": "Apple", "product": "iOS, iPadOS, and macOS" },
+          { "vendor": "Apple", "product": "iOS, iPadOS, and watchOS" },
+          { "vendor": "Apple", "product": "iOS, macOS, watchOS" },
+          { "vendor": "Apple", "product": "Multiple Products" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "Includes iPadOS and broad Apple multiple-product KEV entries. Applicability must be verified from the vendor advisory."
+    },
+    {
+      "id": "apple-macos",
+      "category": "Android / iOS / macOS",
+      "matcher": {
+        "type": "product", "vendor": "Apple", "product": "macOS",
+        "aliases": [
+          { "vendor": "Apple", "product": "OS X" },
+          { "vendor": "Apple", "product": "iOS and macOS" },
+          { "vendor": "Apple", "product": "iOS, iPadOS, and macOS" },
+          { "vendor": "Apple", "product": "iOS, macOS, watchOS" },
+          { "vendor": "Apple", "product": "Multiple Products" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "Includes legacy OS X and broad Apple multiple-product KEV entries. Applicability must be verified from the vendor advisory."
+    },
+    {
+      "id": "chrome-chromium",
+      "category": "Browsers / JavaScript engines",
+      "matcher": {
+        "type": "product", "vendor": "Google", "product": "Chrome",
+        "aliases": [
+          { "vendor": "Google", "product": "Chromium" },
+          { "vendor": "Google", "product": "Chromium V8" },
+          { "vendor": "Google", "product": "Chrome Blink" },
+          { "vendor": "Google", "product": "Chromium Blink" },
+          { "vendor": "Google", "product": "Chrome for Android UI" }
+        ]
+      },
+      "minimumSeverity": "high",
+      "coverageNote": "Selected browser/engine identifiers in CISA KEV, not all Chrome components or all JavaScript vulnerabilities."
+    },
+    { "id": "microsoft-edge", "category": "Browsers / JavaScript engines", "matcher": { "type": "product", "vendor": "Microsoft", "product": "Edge", "aliases": [{ "vendor": "Microsoft", "product": "Edge and Internet Explorer" }, { "vendor": "Microsoft", "product": "Internet Explorer and Edge" }] }, "minimumSeverity": "high" },
+    { "id": "postgresql", "category": "PostgreSQL / Redis", "matcher": { "type": "product", "vendor": "PostgreSQL", "product": "PostgreSQL" }, "minimumSeverity": "high" },
+    { "id": "redis", "category": "PostgreSQL / Redis", "matcher": { "type": "product", "vendor": "Redis", "product": "Redis" }, "minimumSeverity": "high" },
+    { "id": "docker", "category": "Docker / nginx / Linux", "matcher": { "type": "product", "vendor": "Docker", "product": "Docker" }, "minimumSeverity": "high" },
+    { "id": "nginx", "category": "Docker / nginx / Linux", "matcher": { "type": "product", "vendor": "F5", "product": "NGINX" }, "minimumSeverity": "high" },
+    { "id": "linux-kernel", "category": "Docker / nginx / Linux", "matcher": { "type": "product", "vendor": "Linux", "product": "Linux Kernel" }, "minimumSeverity": "critical" },
+    { "id": "generic-jdk", "category": "Java / Kotlin / Spring", "matcher": { "type": "unsupported", "description": "Generic language/runtime matching needs a concrete vendor/product or package coordinate." }, "minimumSeverity": "high" }
+  ]
+}
