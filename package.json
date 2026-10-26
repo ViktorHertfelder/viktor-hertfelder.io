@@ -12,7 +12,7 @@
     "test:cve": "node --experimental-strip-types --test scripts/cve/tests/*.test.ts"
   },
   "dependencies": {
-    "next": "16.2.7",
+    "next": "16.4.1",
     "nodemailer": "^8.0.10",
     "react": "19.2.4",
     "react-dom": "19.2.4"
