@@ -16,7 +16,6 @@ const args = new Set(process.argv.slice(2));
 const dryRun = args.has("--dry-run");
 const shouldSend = args.has("--send") && !dryRun;
 const initialLimit = args.has("--backfill") ? 25 : 12;
-const generatedAt = new Date().toISOString();
 
 if (shouldSend && (!process.env.CVE_STATE_REPOSITORY || !process.env.CVE_STATE_TOKEN)) {
   throw new Error("Sending requires CVE_STATE_REPOSITORY and CVE_STATE_TOKEN to prevent duplicate notifications.");
@@ -53,6 +52,7 @@ if (database.size === 0) {
 
 const normalized = database.all();
 const { matches, warnings } = applyWatchlist(normalized, watchlist);
+const generatedAt = new Date().toISOString();
 const publicData: PublicSecurityData = {
   generatedAt,
   sourceStatus,

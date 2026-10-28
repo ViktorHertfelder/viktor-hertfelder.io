@@ -89,6 +89,15 @@ exploited filters. Technology options are grouped by category and show only
 technologies with matching advisories, not the entire watchlist. Source badges
 show whether collection succeeded. Results are displayed in batches of 25.
 
+The default period is **published or updated in the last 24 hours**, sorted by
+the most recent source publication/modification timestamp. Other options are
+today in Europe/Berlin, the last seven days, and the full archive. An old advisory
+can appear in the recent view if its source reports a recent update; publication,
+modification and snapshot-collection dates are displayed separately.
+The page refreshes its JSON without cache every five minutes while visible and
+when returning to the tab. This does not rerun collection. Snapshots older than
+36 hours show an overdue-update warning rather than suggesting complete freshness.
+
 ### Required GitHub Actions secrets
 
 - `CVE_WATCHLIST_JSON`: private production watchlist JSON. If omitted, the checked-in example is used and its scope is public.
@@ -108,7 +117,13 @@ This repository is public. Private watchlist details, installed versions, email 
 4. Run the workflow manually with `dry_run` enabled. Inspect the log and `/security` build before enabling `send_email`.
 5. Run once with `send_email` enabled. The first digest is capped at 12 entries (25 only when `initial_backfill` is selected).
 
-The workflow uses two UTC cron slots and a `Europe/Berlin` runtime gate, so exactly the 07:00 local slot proceeds across daylight-saving changes. Scheduled runs collect, send, build, and deploy. Pushes collect and deploy without sending. Manual runs default to dry-run.
+The workflow schedules collection at 07:00 with GitHub's native
+`timezone: Europe/Berlin` support, including daylight-saving changes. There is
+no runner-clock gate: a delayed scheduled run must still collect and deploy.
+GitHub Actions schedules can be delayed or dropped under load; 07:00 is the
+scheduled time, not an exact delivery guarantee. Scheduled runs collect, send,
+build, and deploy. Pushes collect and deploy without sending. Manual runs default
+to dry-run.
 
 Missing email/state secrets disable email with an Actions warning while collection
 and deployment continue. Collector failures also produce a warning and do not

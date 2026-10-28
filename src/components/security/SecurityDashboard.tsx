@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { advisoryActivityTime, isInTimeRange, isSnapshotStale, parseAdvisoryDate, type TimeRange } from "@/lib/security-recency";
 
 type Severity = "unknown" | "low" | "moderate" | "high" | "critical";
 type SecurityItem = {
@@ -37,15 +38,27 @@ export default function SecurityDashboard() {
   const [source, setSource] = useState("");
   const [exploitedOnly, setExploitedOnly] = useState(false);
   const [visibleCount, setVisibleCount] = useState(25);
+  const [timeRange, setTimeRange] = useState<TimeRange>("24h");
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
-    fetch("/security-data.json")
+    let active = true;
+    const controller = new AbortController();
+    const refresh = () => {
+      setNow(Date.now());
+      return fetch("/security-data.json", { cache: "no-store", signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error("Monitoring data unavailable");
         return response.json() as Promise<SecurityData>;
       })
-      .then(setData)
-      .catch(() => setFailed(true));
+      .then((snapshot) => { if (active) { setData(snapshot); setFailed(false); setNow(Date.now()); } })
+      .catch(() => { if (active) setFailed(true); });
+    };
+    void refresh();
+    const interval = setInterval(() => { if (!document.hidden) void refresh(); }, 5 * 60_000);
+    const onVisibility = () => { if (!document.hidden) void refresh(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => { active = false; controller.abort(); clearInterval(interval); document.removeEventListener("visibilitychange", onVisibility); };
   }, []);
 
   const technologyGroups = useMemo(() => {
@@ -69,13 +82,14 @@ export default function SecurityDashboard() {
         ...item.aliases,
         ...item.matches.flatMap((match) => [match.category, match.technology]),
       ].join(" ").toLowerCase();
-      return (!query || searchable.includes(query)) &&
+      return isInTimeRange(item, timeRange, now) &&
+        (!query || searchable.includes(query)) &&
         (severity === "all" || item.severity === severity) &&
         (!technology || item.matches.some((match) => match.technology === technology)) &&
         (!source || item.references.some((reference) => reference.source === source)) &&
         (!exploitedOnly || item.exploitation.knownExploited);
-    });
-  }, [data, exploitedOnly, search, severity, technology, source]);
+    }).sort((a, b) => advisoryActivityTime(b) - advisoryActivityTime(a) || b.riskScore - a.riskScore);
+  }, [data, exploitedOnly, search, severity, technology, source, timeRange, now]);
 
   return (
     <main className="relative min-h-screen bg-[#0F1115] text-white">
@@ -92,7 +106,9 @@ export default function SecurityDashboard() {
           <p className="mt-6 max-w-2xl text-base leading-7 text-zinc-400">
             Advisories matched against your technology watchlist. A technology match requires an applicability check for your installed version and configuration.
           </p>
-          {data && <p className="mt-4 text-xs text-zinc-600">Last generated {formatDate(data.generatedAt, true)}</p>}
+          {data && <p className="mt-4 text-sm text-zinc-400">Data collected {formatDate(data.generatedAt, true)} · Europe/Berlin</p>}
+          <p className="mt-2 text-xs leading-5 text-zinc-500">Default: published or updated in the last 24 hours, newest first. Older advisories remain available in the archive. Data is collected daily around 07:00 Europe/Berlin.</p>
+          {data && isSnapshotStale(data.generatedAt, now) && <p role="alert" className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">The data snapshot is over 36 hours old. The daily update is overdue; an empty recent view does not confirm that there are no new vulnerabilities.</p>}
           {data && <div aria-label="Data sources" className="mt-4 flex flex-wrap gap-2">
             {Object.entries(data.sourceStatus).map(([name, status]) => (
               <span key={name} className={`rounded-full border px-3 py-1 text-xs ${status.ok ? "border-white/10 text-zinc-400" : "border-amber-500/30 text-amber-300"}`}>
@@ -110,6 +126,17 @@ export default function SecurityDashboard() {
             aria-label="Search vulnerabilities"
             className="min-w-0 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm outline-none placeholder:text-zinc-600 focus:border-blue-500/70"
           />
+          <select
+            value={timeRange}
+            onChange={(event) => { setTimeRange(event.target.value as TimeRange); setVisibleCount(25); }}
+            aria-label="Filter by time period"
+            className="min-w-0 rounded-xl border border-white/10 bg-[#151820] px-4 py-3 text-sm outline-none focus:border-blue-500/70"
+          >
+            <option value="24h">New or updated · last 24 hours</option>
+            <option value="today">New or updated · today (Berlin)</option>
+            <option value="7d">New or updated · last 7 days</option>
+            <option value="all">All dates · archive</option>
+          </select>
           <select
             value={technology}
             onChange={(event) => { setTechnology(event.target.value); setVisibleCount(25); }}
@@ -144,13 +171,13 @@ export default function SecurityDashboard() {
             <input type="checkbox" checked={exploitedOnly} onChange={(event) => { setExploitedOnly(event.target.checked); setVisibleCount(25); }} className="accent-blue-500" />
             Known exploited
           </label>
-          <button type="button" onClick={() => { setSearch(""); setTechnology(""); setSource(""); setSeverity("all"); setExploitedOnly(false); setVisibleCount(25); }} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-zinc-400 transition hover:text-white">Reset filters</button>
+          <button type="button" onClick={() => { setSearch(""); setTechnology(""); setSource(""); setSeverity("all"); setTimeRange("24h"); setExploitedOnly(false); setVisibleCount(25); }} className="rounded-xl border border-white/10 px-4 py-3 text-sm text-zinc-400 transition hover:text-white">Reset filters</button>
         </section>
         {data && <p role="status" className="mb-6 text-sm text-zinc-500">{filtered.length} of {data.vulnerabilities.length} advisories · technologies with matching advisories are listed</p>}
 
-        {failed && <StatusMessage>Monitoring data could not be loaded. The rest of the website remains available.</StatusMessage>}
+        {failed && <StatusMessage>{data ? "Data refresh failed. The displayed snapshot may be outdated." : "Monitoring data could not be loaded. The rest of the website remains available."}</StatusMessage>}
         {!data && !failed && <StatusMessage>Loading monitoring data…</StatusMessage>}
-        {data && filtered.length === 0 && <StatusMessage>No advisories match the current filters.</StatusMessage>}
+        {data && filtered.length === 0 && <StatusMessage>No advisories match the selected period and filters in this snapshot. Select “All dates · archive” to view older advisories.</StatusMessage>}
 
         <div className="grid gap-4">
           {filtered.slice(0, visibleCount).map((item) => <AdvisoryCard item={item} key={item.id} />)}
@@ -182,6 +209,7 @@ function AdvisoryCard({ item }: { item: SecurityItem }) {
         </div>
         <div className="shrink-0 text-left text-xs text-zinc-500 sm:text-right">
           <div>Published {formatDate(item.publishedAt)}</div>
+          {item.modifiedAt && <div className="mt-1">Updated {formatDate(item.modifiedAt, true)}</div>}
           <div className="mt-1">Risk score {item.riskScore}</div>
         </div>
       </div>
@@ -221,7 +249,9 @@ function StatusMessage({ children }: { children: React.ReactNode }) {
 }
 function formatDate(value?: string, withTime = false) {
   if (!value || value.startsWith("1970-")) return "not yet";
-  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", ...(withTime ? { timeStyle: "short" } : {}) }).format(new Date(value));
+  const date = parseAdvisoryDate(value);
+  if (!Number.isFinite(date)) return "unknown";
+  return new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Berlin", dateStyle: "medium", ...(withTime ? { timeStyle: "short" } : {}) }).format(new Date(date));
 }
 
 function sourceLabel(source: string) {
