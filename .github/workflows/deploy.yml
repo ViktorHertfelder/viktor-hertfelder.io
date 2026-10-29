@@ -15,9 +15,9 @@ on:
         type: boolean
         default: false
       dry_run:
-        description: Print the digest without sending or updating delivery state
+        description: Print a digest preview to the workflow log (never sends email)
         type: boolean
-        default: true
+        default: false
       initial_backfill:
         description: Include up to 25 items on an empty delivery state (default is 12)
         type: boolean

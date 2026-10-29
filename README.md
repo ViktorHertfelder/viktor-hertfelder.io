@@ -1,6 +1,6 @@
 # hertfelder.io
 
-Static Next.js portfolio deployed to GitHub Pages. The repository also contains a personal CVE monitor that collects GitHub Security Advisories, CISA Known Exploited Vulnerabilities, OSV and Microsoft MSRC, matches them against a structured watchlist, publishes sanitized data at `/security/`, and optionally sends a daily plain-text digest through Resend.
+Static Next.js portfolio deployed to GitHub Pages. The repository also contains a personal CVE monitor that collects GitHub Security Advisories, CISA Known Exploited Vulnerabilities, OSV, Microsoft MSRC and Node.js Security WG core reports, matches them against a structured watchlist, publishes sanitized data at `/security/`, and optionally sends a daily plain-text digest through Resend.
 
 ## Local development
 
@@ -22,6 +22,15 @@ applications, Exchange Server, SharePoint, GitLab CE/EE, GitHub Enterprise Serve
 selected GitHub Actions toolkit packages, PHP/PHP-FPM, Composer, npm CLI,
 TypeScript, Node.js, Android/Pixel, iOS/iPadOS, macOS/OS X, Chrome/Chromium and Edge,
 in addition to the original web/backend stack.
+
+The expanded default has 98 entries, including concrete coordinates for the Java,
+Kotlin, JavaScript/TypeScript and PHP stack represented in `src/data/projects.ts`.
+It includes Spring Web/MVC/WebFlux/Security, Jackson, Vaadin, Jsoup, Kotlin
+stdlib/coroutines/serialization, Compose, Tomcat/Jetty/Netty, Express/Fastify/NestJS,
+JDBC and Node database drivers, H2, MariaDB, Redis, Liquibase, Maven/Gradle,
+Elasticsearch/Kibana/Logstash, and the testing tools used in those projects.
+Product-only targets remain limited to the available product sources; matching
+an entry does not mean every vendor security release is covered.
 
 Product matchers can declare an `aliases` array of exact `{vendor, product}`
 identifiers. These are matched against structured source fields, never against
@@ -45,7 +54,7 @@ Run a local collection without email:
 npm run cve:dry-run
 ```
 
-This accesses the four public source APIs and rewrites `public/security-data.json`.
+This accesses the five public sources and rewrites `public/security-data.json`.
 Source failures are isolated and displayed in the page's source status. If every
 source fails, the command exits before replacing existing data. Advisory absence
 is never treated as proof that a technology is unaffected.
@@ -79,6 +88,11 @@ history still requires the separate private state repository described below.
   product families are normalized from structured product fields. Product names
   retain their edition/version descriptions; fixed builds and vendor update links
   are used when provided. Older revisions outside this window are not collected.
+- **Node.js Security WG:** individual numeric JSON reports from the official
+  `nodejs/security-wg/vuln/core` directory, not its potentially stale generated
+  index. Runtime product identifiers match the Node.js watchlist entry. Distinct
+  CVEs in one report remain separate records. Undated reports remain undated and
+  are visible through the archive rather than being misrepresented as new today.
 
 OSV and MSRC require no additional API keys. NVD and FIRST EPSS are not integrated.
 OSV numeric CVSS vectors are not calculated locally; severity labels are used when
@@ -97,6 +111,20 @@ modification and snapshot-collection dates are displayed separately.
 The page refreshes its JSON without cache every five minutes while visible and
 when returning to the tab. This does not rerun collection. Snapshots older than
 36 hours show an overdue-update warning rather than suggesting complete freshness.
+
+### On-demand collection from the public page
+
+The **CVEs jetzt sammeln** button opens the repository's existing deploy workflow
+on GitHub. Sign in with a GitHub account that has repository write access, choose
+**Run workflow**, keep branch **main** and the default unchecked inputs, and run
+it. This collects new data and deploys the updated static site without sending
+email or printing a private digest. The separate **Daten neu laden** button only
+reloads the published JSON; it never starts a collection.
+
+GitHub Pages has no authenticated server-side endpoint for dispatching workflows.
+Consequently the public page contains no dispatch token or credentials and cannot
+start a privileged workflow by itself. Authentication and the final dispatch
+remain on GitHub. No paid backend or new hosting service is introduced.
 
 ### Required GitHub Actions secrets
 
@@ -123,7 +151,8 @@ no runner-clock gate: a delayed scheduled run must still collect and deploy.
 GitHub Actions schedules can be delayed or dropped under load; 07:00 is the
 scheduled time, not an exact delivery guarantee. Scheduled runs collect, send,
 build, and deploy. Pushes collect and deploy without sending. Manual runs default
-to dry-run.
+to collection/deployment without email; enable `dry_run` explicitly only when a
+digest preview in the workflow log is appropriate.
 
 Missing email/state secrets disable email with an Actions warning while collection
 and deployment continue. Collector failures also produce a warning and do not
@@ -141,7 +170,7 @@ all collectors fail before generating fresh data.
 
 ### Current limitations
 
-- GitHub, CISA KEV, OSV and Microsoft MSRC are integrated. NVD and FIRST EPSS can be added later.
+- GitHub, CISA KEV, OSV, Microsoft MSRC and Node.js core reports are integrated. NVD and FIRST EPSS can be added later.
 - GitHub collection is capped at the 1,000 most recently updated global advisories per run to bound runtime and API use.
 - CISA product matching requires normalized vendor/product identifiers; package matching requires ecosystem/name. There is deliberately no fallback free-text matcher.
 - Installed-version ranges are not guessed across ecosystems; entries remain relevant with an explicit `unknown` version status for manual review.

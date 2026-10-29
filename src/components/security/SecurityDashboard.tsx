@@ -40,6 +40,7 @@ export default function SecurityDashboard() {
   const [visibleCount, setVisibleCount] = useState(25);
   const [timeRange, setTimeRange] = useState<TimeRange>("24h");
   const [now, setNow] = useState(() => Date.now());
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -59,7 +60,7 @@ export default function SecurityDashboard() {
     const onVisibility = () => { if (!document.hidden) void refresh(); };
     document.addEventListener("visibilitychange", onVisibility);
     return () => { active = false; controller.abort(); clearInterval(interval); document.removeEventListener("visibilitychange", onVisibility); };
-  }, []);
+  }, [reloadKey]);
 
   const technologyGroups = useMemo(() => {
     const groups = new Map<string, Set<string>>();
@@ -108,6 +109,17 @@ export default function SecurityDashboard() {
           </p>
           {data && <p className="mt-4 text-sm text-zinc-400">Data collected {formatDate(data.generatedAt, true)} · Europe/Berlin</p>}
           <p className="mt-2 text-xs leading-5 text-zinc-500">Default: published or updated in the last 24 hours, newest first. Older advisories remain available in the archive. Data is collected daily around 07:00 Europe/Berlin.</p>
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <a
+              href="https://github.com/ViktorHertfelder/viktor-hertfelder.io/actions/workflows/deploy.yml"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-describedby="crawl-instructions"
+              className="rounded-xl bg-blue-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-400 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-400"
+            >CVEs jetzt sammeln ↗</a>
+            <button type="button" onClick={() => setReloadKey((key) => key + 1)} className="rounded-xl border border-white/10 px-5 py-3 text-sm text-zinc-300 transition hover:border-blue-400/50">Daten neu laden</button>
+          </div>
+          <p id="crawl-instructions" className="mt-3 max-w-2xl text-xs leading-5 text-zinc-400">Öffnet GitHub Actions: Dort mit deinem Repository-Zugriff „Run workflow“ auf Branch „main“ starten. Die Voreinstellungen sammeln und veröffentlichen ohne E-Mail. Nach erfolgreichem Deployment hier die Daten neu laden. Das Neuladen allein startet keinen Collector.</p>
           {data && isSnapshotStale(data.generatedAt, now) && <p role="alert" className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">The data snapshot is over 36 hours old. The daily update is overdue; an empty recent view does not confirm that there are no new vulnerabilities.</p>}
           {data && <div aria-label="Data sources" className="mt-4 flex flex-wrap gap-2">
             {Object.entries(data.sourceStatus).map(([name, status]) => (
@@ -255,5 +267,5 @@ function formatDate(value?: string, withTime = false) {
 }
 
 function sourceLabel(source: string) {
-  return ({ github: "GitHub Advisories", "cisa-kev": "CISA KEV", osv: "OSV", msrc: "Microsoft MSRC" } as Record<string, string>)[source] ?? source;
+  return ({ github: "GitHub Advisories", "cisa-kev": "CISA KEV", osv: "OSV", msrc: "Microsoft MSRC", nodejs: "Node.js Security WG" } as Record<string, string>)[source] ?? source;
 }

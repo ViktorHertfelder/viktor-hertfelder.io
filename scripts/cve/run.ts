@@ -4,6 +4,7 @@ import { collectGitHubAdvisories } from "./collectors/github.ts";
 import { collectCisaKev } from "./collectors/cisa.ts";
 import { collectOsv } from "./collectors/osv.ts";
 import { collectMsrc } from "./collectors/msrc.ts";
+import { collectNodeAdvisories } from "./collectors/nodejs.ts";
 import { VulnerabilityDatabase } from "./database.ts";
 import { applyWatchlist } from "./watchlist.ts";
 import { buildPlainTextDigest } from "./digest.ts";
@@ -27,6 +28,7 @@ const sources = [
   { name: "cisa-kev", collect: () => collectCisaKev() },
   { name: "osv", collect: () => collectOsv(watchlist) },
   { name: "msrc", collect: () => collectMsrc() },
+  { name: "nodejs", collect: () => collectNodeAdvisories(process.env.GITHUB_TOKEN) },
 ];
 const collectors = await Promise.allSettled(sources.map((source) => source.collect()));
 const sourceStatus: PublicSecurityData["sourceStatus"] = {};
